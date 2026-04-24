@@ -1,0 +1,149 @@
+body {
+    width: 100vw;
+    height: 100vh;
+}
+
+.container, main, nav, header, footer {
+    width: 100%;
+    height: 100%;
+
+    background-color: var(--background-color);
+}
+
+.container {
+    display: grid;
+
+    grid-template-columns: 100%;
+    grid-template-rows: 60px 50px 1fr 40px;
+
+    grid-template-areas: 
+    "header"
+    "nav"
+    "main"
+    "footer";
+}
+
+/* HEADER CONFIGS */
+
+header {
+    grid-area: header;
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.title {
+    font-size: 2rem;
+}
+
+/* MAIN CONFIGS */
+
+main {
+    grid-area: main;
+
+    border-top: 3px solid;
+    border-bottom: 3px solid;
+    border-color: var(--details-color);
+
+    display: grid;
+    grid-template-columns: 80% 20%;
+    grid-template-rows: 100%;
+    align-items: center;
+    justify-items: center;
+}
+
+thead th {
+    font-size: 1.3rem;
+
+    padding: 3px;
+}
+
+.driver td {
+    font-size: 1.2rem;
+
+    padding: 3px;
+}
+
+.table-drivers {
+    width: 100%;
+    height: 97%;
+
+    table-layout: fixed;
+    border-collapse: separate;
+    border-spacing: 1px;
+}
+
+.position {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.meeting {
+    width: 90%;
+    height: 90%;
+
+    border: 3px solid;
+    border-color: var(--details-color);
+    border-radius: 10px;
+
+    display: grid;
+    grid-template-rows: repeat(4, 50px);
+    grid-template-columns: 100%;
+}
+
+.country-image {
+    width: 100px;
+    height: auto;
+}
+
+.country-image img {
+    width: 100%;
+    height: 100%;
+}
+
+/* NAV CONFIGS */
+
+nav {
+    grid-area: nav;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+nav a {
+    text-decoration: none;
+
+    font-size: 1.2rem;
+    
+    padding: 3px 5px;
+    margin: 0 50px;
+
+    border: 3px solid;
+    border-radius: 5px;
+    border-color: var(--details-color);
+    background-color: var(--details-color);
+}
+
+footer {
+    grid-area: footer;
+}
+
+.f1-logo {
+    width: 110px;
+    aspect-ratio: initial;
+
+    left: 25px;
+
+    position: absolute;
+}
+
+.f1-logo img {
+    width: 100%;
+    height: 100%;
+
+    filter: invert(1);
+}

@@ -1,4 +1,6 @@
 export async function callApi(path) {
+    await waitTime(1000);
+
     let url = "https://api.openf1.org/v1/";
 
     let response = await fetch(url + path);
@@ -58,4 +60,28 @@ export async function loadRace(meeting) {
     console.log("Race loaded");
 
     return race[0];
+}
+
+export async function loadQualy(meeting) {
+    let path = `sessions?meeting_key=${meeting.key}&session_name=Qualifying&session_type=Qualifying`;
+
+    let qualy = await callApi(path);
+
+    console.log("Qualy loaded");
+
+    return qualy[0];
+}
+
+export async function loadPositions(race_key) {
+    let path = `position?session_key=${race_key}`;
+
+    let positions = await callApi(path);
+
+    console.log("Positions loaded");
+
+    return positions;
+}
+
+async function waitTime(time) {
+    return new Promise(resolve => setTimeout(resolve, time));
 }

@@ -3,12 +3,16 @@ import { StartingGrid } from "./objects/startinggrid.js";
 import { Meeting } from "./objects/meeting.js";
 import { Overtake } from "./objects/overtake.js";
 import { Race } from "./objects/race.js";
-import { loadDrivers, loadMeeting, loadStartingGrid, loadOvertakes, loadRace } from "./utils/calls.js";
+import { Qualy } from "./objects/qualy.js";
+import { Position } from "./objects/position.js";
+import { loadDrivers, loadMeeting, loadStartingGrid, loadOvertakes, loadRace, loadQualy, loadPositions } from "./utils/calls.js";
 
 let drivers = [];
 let overtakes = [];
+let positions = [];
 let race = null;
 let meeting = null;
+let qualy = null;
 let driversTable = document.querySelector(".table-drivers tbody");
 
 function setStartingGrid() {
@@ -65,15 +69,15 @@ function updateMeetingData() {
 }
 
 function updateGrid() {
-    let overtake = overtakes[0];
+    let position = positions[0];
 
-    console.log(overtake);
+    console.log(position);
 
-    let driverOvertaking = drivers.find(driver => driver.number == overtake.numberOvertaking);
-    let driverOvertaken = drivers.find(driver => driver.number == overtake.numberOvertaken);
+    let driverOvertaking = drivers.find(driver => driver.number == position.driverNumber);
+    let driverOvertaken = drivers.find(driver => driver.position == position.position);
 
     if(driverOvertaken == null || driverOvertaking == null) {
-        overtakes = overtakes.slice(1);
+        positions = positions.slice(1);
         return;
     }
 
@@ -81,9 +85,9 @@ function updateGrid() {
     driverOvertaking.position = driverOvertaken.position;
     driverOvertaken.position = positionOvertaking;
 
-    overtakes = overtakes.slice(1);
+    positions = positions.slice(1);
 
-    if(overtakes.length == 0) {
+    if(positions.length == 0) {
         clearInterval(interval);
     }
 }
@@ -92,27 +96,37 @@ function createElement(element) {
     return document.createElement(element);
 }
 
-let session_id = 9627; // Brazil 2024 Qualy
-
 async function init() {
-    meeting = Meeting.createMeeting( await loadMeeting("Brazil", "2024") );
+    meeting = Meeting.createMeeting( await loadMeeting("Brazil", "2025") );
+
+    qualy = Qualy.createQualy( await loadQualy(meeting) );
     race = Race.createRace( await loadRace(meeting) );
 
     let session_race = race.key;
+    let session_qualy = qualy.key;
 
-    overtakes = Overtake.createOvertakes( await loadOvertakes(session_race));
-    drivers = Driver.createDrivers( await loadDrivers(session_id) );
-    StartingGrid.compositeStartingGrid( drivers, await loadStartingGrid(session_id) );
+    overtakes = Overtake.createOvertakes( await loadOvertakes(session_race) );
+    drivers = Driver.createDrivers( await loadDrivers(session_qualy) );
+    positions = Position.createPositions( await loadPositions(session_race) );
+    StartingGrid.compositeStartingGrid( drivers, await loadStartingGrid(session_qualy) );
+}
+
+function orderPositions() {
+    positions.sort((positionA, positionB) => {
+        let dateA = new Date(positionA.date);
+        let dateB = new Date(positionB.date);
+
+        return dateA - dateB;
+    });
 }
 
 await init();
 
 updateMeetingData();
 setStartingGrid();
-
-console.log(overtakes)
+orderPositions();
 
 let interval = setInterval(() => {
     updateGrid();
     setStartingGrid();
-}, 500)
+}, 100)
